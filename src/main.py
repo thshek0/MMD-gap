@@ -38,10 +38,10 @@ def load_configs_initialize_training():
 
     parser.add_argument("--seed", type=int, default=-1, help="seed for generating random numbers")
     parser.add_argument("-DDP", "--distributed_data_parallel", action="store_true")
-    parser.add_argument("--backend", type=str, default="nccl", help="cuda backend for DDP training \in ['nccl', 'gloo']")
+    parser.add_argument("--backend", type=str, default="nccl", help="cuda backend for DDP training in ['nccl', 'gloo']")
     parser.add_argument("-tn", "--total_nodes", default=1, type=int, help="total number of nodes for training")
     parser.add_argument("-cn", "--current_node", default=0, type=int, help="rank of the current node")
-    parser.add_argument("--num_workers", type=int, default=8)
+    parser.add_argument("--num_workers", type=int, default=2)
     parser.add_argument("-sync_bn", "--synchronized_bn", action="store_true", help="turn on synchronized batchnorm")
     parser.add_argument("-mpc", "--mixed_precision", action="store_true", help="turn on mixed precision training")
 
@@ -63,7 +63,7 @@ def load_configs_initialize_training():
     parser.add_argument("-lgv", "--langevin_sampling", action="store_true",
                         help="apply langevin sampling to generate images from a Energy-Based Model")
     parser.add_argument("-lgv_rate", "--langevin_rate", type=float, default=-1,
-                        help="an initial update rate for langevin sampling (\epsilon)")
+                        help="an initial update rate for langevin sampling (epsilon)")
     parser.add_argument("-lgv_std", "--langevin_noise_std", type=float, default=-1,
                         help="standard deviation of a gaussian noise used in langevin sampling (std of n_i)")
     parser.add_argument("-lgv_decay", "--langevin_decay", type=float, default=-1,
@@ -75,7 +75,7 @@ def load_configs_initialize_training():
     parser.add_argument("-t", "--train", action="store_true")
     parser.add_argument("-hdf5", "--load_train_hdf5", action="store_true", help="load train images from a hdf5 file for fast I/O")
     parser.add_argument("-l", "--load_data_in_memory", action="store_true", help="put the whole train dataset on the main memory for fast I/O")
-    parser.add_argument("-metrics", "--eval_metrics", nargs='+', default=['fid'],
+    parser.add_argument("-metrics", "--eval_metrics", nargs='+', default=['mmd'],
                         help="evaluation metrics to use during training, a subset list of ['fid', 'is', 'prdc'] or none")
     parser.add_argument("--pre_resizer", type=str, default="wo_resize", help="which resizer will you use to pre-process images\
                         in ['wo_resize', 'nearest', 'bilinear', 'bicubic', 'lanczos']")
@@ -103,7 +103,7 @@ def load_configs_initialize_training():
 
     parser.add_argument("--print_freq", type=int, default=100, help="logging interval")
     parser.add_argument("--save_freq", type=int, default=2000, help="save interval")
-    parser.add_argument('--eval_backbone', type=str, default='InceptionV3_tf',\
+    parser.add_argument('--eval_backbone', type=str, default='InceptionV3_torch',\
                         help="[InceptionV3_tf, InceptionV3_torch, ResNet50_torch, SwAV_torch, DINO_torch, Swin-T_torch]")
     parser.add_argument("-ref", "--ref_dataset", type=str, default="train", help="reference dataset for evaluation[train/valid/test]")
     parser.add_argument("--calc_is_ref_dataset", action="store_true", help="whether to calculate a inception score of the ref dataset.")

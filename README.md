@@ -1,3 +1,5 @@
+python3 src/main.py -data data/CIFAR10/ -ckpt studiogan_official_ckpt/CIFAR10_tailored/CIFAR10-ContraGAN-train-2022_01_13_01_25_00/ -best -metrics prdc -sr -sf
+
 <p align="center">
   <img width="60%" src="https://raw.githubusercontent.com/POSTECH-CVLab/PyTorch-StudioGAN/master/docs/figures/studiogan_logo.jpg" />
 </p>

@@ -33,6 +33,7 @@ import metrics.features as features
 import metrics.ins as ins
 import metrics.fid as fid
 import metrics.prdc as prdc
+import metrics.mmd as mmd
 import metrics.resnet as resnet
 import utils.ckpt as ckpt
 import utils.sample as sample
@@ -899,6 +900,7 @@ class WORKER(object):
                                                           world_size=self.OPTIMIZATION.world_size,
                                                           DDP=self.DDP,
                                                           disable_tqdm=True)
+                
                 if self.global_rank == 0:
                     self.logger.info("Improved Precision (Step: {step}, Using {type} images): {prc}".format(
                         step=step, type=self.RUN.ref_dataset, prc=prc))
@@ -914,6 +916,28 @@ class WORKER(object):
                         wandb.log({"Improved Recall": rec}, step=self.wandb_step)
                         wandb.log({"Density": dns}, step=self.wandb_step)
                         wandb.log({"Coverage": cvg}, step=self.wandb_step)
+
+            if "mmd" in metrics:
+                val, baseline = mmd.calculate_mmd(train_feats=None,
+                                                  eval_feats=self.real_feats,
+                                                fake_feats=fake_feats,
+                                                train_data_loader=self.train_dataloader,
+                                                eval_data_loader=self.eval_dataloader,
+                                                eval_model=self.eval_model,
+                                                num_generate=self.num_eval[self.RUN.ref_dataset],
+                                                cfgs=self.cfgs,
+                                                quantize=True,
+                                                world_size=self.OPTIMIZATION.world_size,
+                                                DDP=self.DDP,
+                                                disable_tqdm=False)
+                
+                if self.global_rank == 0:
+                    self.logger.info("MMD-Gap (Step: {step}, Using {type} images): {val} ({baseline})".format(
+                        step=step, type=self.RUN.ref_dataset, val=val, baseline=baseline))
+                    metric_dict.update({"MMD_Gap": val, "Baseline": baseline})
+                    if writing:
+                        wandb.log({"MMD_Gap": val}, step=self.wandb_step)
+                        wandb.log({"Baseline": baseline}, step=self.wandb_step)
 
             if self.global_rank == 0:
                 if training:
