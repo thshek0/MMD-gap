@@ -12,3 +12,8 @@ wandb/
 test/
 *.csv
 *.npy
+samples/
+studiogan_official_ckpt/
+momemts/
+feats/
+figures/
